@@ -1,0 +1,10 @@
+<launch>
+  <arg name="device" default="/dev/ttyACM0" />
+  
+  <node pkg="nodelet" type="nodelet" name="standalone_nodelet"  args="manager" output="screen"/>
+
+  <node pkg="nodelet" type="nodelet" name="AirSkinNodelet" args="load tuw/AirSkinNodelet standalone_nodelet" output="screen">
+    <param name="device" value="$(arg device)" />
+    <rosparam command="load" file="$(find tuw_airskin)/cfg/airskin.yaml" />
+  </node>                 
+</launch>

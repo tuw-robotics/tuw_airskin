@@ -1,0 +1,3 @@
+#Vectors of I2C addresses and corresponding names
+pad_i2c_ids : [0x03,0x04,0x05,0x06]
+pad_names: ["left-front","left-back","right-front","right-back"]
