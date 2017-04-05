@@ -26,3 +26,9 @@ void I2C_Master::CheckedWrite(int fd, const unsigned char buf[], size_t len)
   if(written != (ssize_t)len)
     throw Except(__HERE__, "failed to write to device after %d retries", 10);
 }
+
+int I2C_Master::GetFirmwareVersion(void)
+{
+    throw Except(__HERE__, "not implemented");
+    return 0;
+}

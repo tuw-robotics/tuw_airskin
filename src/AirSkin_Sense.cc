@@ -7,8 +7,9 @@
 #include <airskin_nodelet/AirSkin_Sense.h>
 #include <airskin_nodelet/AirSkinPad.h>
 #include <nodelet/nodelet.h>
+#include <memory>
 
-AirSkin_Sense::AirSkin_Sense(I2C_Master *_master, unsigned char _addr)
+AirSkin_Sense::AirSkin_Sense(std::shared_ptr<I2C_Master> &_master, unsigned char _addr)
   : I2C_Slave(_master, _addr)
 {
 }

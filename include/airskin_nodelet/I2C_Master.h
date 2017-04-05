@@ -65,6 +65,8 @@ public:
    */
   virtual void ReadRegister(unsigned char addr, unsigned char reg,
       unsigned char nbytes, unsigned char data[]) = 0;
+      
+  virtual int GetFirmwareVersion(void);
 };
 
 #endif

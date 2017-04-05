@@ -9,6 +9,7 @@
 #include <airskin_nodelet/I2C_Master_Devantech_ISS.h>
 #include <airskin_nodelet/AirSkin_Sense.h>
 #include <std_msgs/ColorRGBA.h>
+#include <memory>
 
 class RunningMean
 {
@@ -88,7 +89,8 @@ private:
   }
 
 public:
-  AirSkinPad(I2C_Master *_master, unsigned char _addr, const std::string &_name);
+  AirSkinPad(std::shared_ptr<I2C_Master> &_master, unsigned char _addr, const std::string &_name);
+  ~AirSkinPad();
   // NOTE: apparently we have I2C wiring issues, so somtimes -1 or some
   // crazy value is returned -> do sanity check
   bool isValidPressure(int p)

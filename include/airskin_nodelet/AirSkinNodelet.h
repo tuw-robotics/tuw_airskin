@@ -18,9 +18,9 @@ namespace tuw
             ros::Publisher pressures_pub;
             ros::Subscriber colors_sub;
             std::string device_file_name;
-            I2C_Master *i2c_master;
+            std::shared_ptr<I2C_Master> i2c_master;
             std::vector<AirSkinPad*> sensors;
-            std::map<uint8_t,AirSkinPad*> pads;
+            std::map<uint8_t,std::unique_ptr<AirSkinPad>> pads;
             bool airskin_ok;
             ros::Timer timer_;
             void timerCallback(const ros::TimerEvent& event);

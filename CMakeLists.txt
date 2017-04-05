@@ -120,32 +120,33 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include)
-include_directories(
+include_directories(include
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
 add_library(tuw_airskin  src/AirSkin_Sense.cc src/AirSkinPad.cpp src/I2C_Master.cc  src/I2C_Master_Devantech_ISS.cc  src/kbhit.cc
-  src/Except.cc  src/I2C_Master_Devantech.cc  src/I2C_Slave.cc src/AirSkinNodelet.cpp
+  src/Except.cc  src/I2C_Master_Devantech.cc  src/I2C_Master_MPSSE.cpp src/I2C_Slave.cc src/AirSkinNodelet.cpp
 )
+
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(airskin_nodelet ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(tuw_airskin ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-# add_executable(airskin_nodelet_node src/airskin_nodelet_node.cpp)
+# add_executable(tuw_airskin src/tuw_airskin.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(airskin_nodelet_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(tuw_airskin ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(airskin_nodelet_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(tuw_airskin
+   ${catkin_LIBRARIES}
+   mpsse
+)
 
 #############
 ## Install ##
@@ -162,7 +163,7 @@ add_library(tuw_airskin  src/AirSkin_Sense.cc src/AirSkinPad.cpp src/I2C_Master.
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS airskin_nodelet airskin_nodelet_node
+# install(TARGETS airskin_nodelet tuw_airskin
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

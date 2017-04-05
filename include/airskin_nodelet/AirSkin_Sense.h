@@ -19,7 +19,7 @@ private:
   uint32_t ReadUInt32(unsigned char addr, unsigned char reg);
 
 public:
-  AirSkin_Sense(I2C_Master *_master, unsigned char _addr = AIRSKIN_DEFAULT_ADDR);
+  AirSkin_Sense(std::shared_ptr<I2C_Master> &_master, unsigned char _addr = AIRSKIN_DEFAULT_ADDR);
   int ReadRawPressure();
   int ReadFilteredPressure();
   void SetColor(unsigned char red, unsigned char green, unsigned char blue);

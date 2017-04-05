@@ -1,18 +1,25 @@
 #include <pluginlib/class_list_macros.h>
 #include <airskin_nodelet/AirSkinNodelet.h>
+#include <airskin_nodelet/I2C_Master_MPSSE.h>
+#include <airskin_nodelet/I2C_Master_Devantech_ISS.h>
 #include <string>
+#include <memory>
 
 namespace tuw
 {
     void AirSkinNodelet::onInit() 
     {
         nh = getPrivateNodeHandle();
-        nh.param("device",device_file_name,std::string("/dev/ttyUSB0"));
+        nh.param("i2c_device",device_file_name,std::string("/dev/ttyUSB0"));
         NODELET_INFO("Initializing AirSkinNodelet...");
-        NODELET_INFO("opening I2C device: '%s'", device_file_name.c_str());
-        i2c_master = new I2C_Master_Devantech_ISS(device_file_name);
-        NODELET_INFO("Devantech USB-ISS adapter, rev. %d",
-            ((I2C_Master_Devantech_ISS*)i2c_master)->GetFirmwareVersion());
+        NODELET_INFO("Opening I2C device: '%s'",device_file_name.c_str());
+        if(device_file_name == "UM232H-B") {
+            i2c_master = std::make_shared<I2C_Master_MPSSE>();
+        } else {
+            i2c_master = std::make_shared<I2C_Master_Devantech_ISS>();
+         NODELET_INFO("Devantech USB-ISS adapter, rev. %d",
+             i2c_master->GetFirmwareVersion());
+        }
         
         
         
@@ -28,7 +35,7 @@ namespace tuw
         NODELET_INFO("Get pads from yaml file:");
         for(int i=0;i<pad_i2c_ids.size();i++) {
             NODELET_INFO("ID: %#4x = %s",pad_i2c_ids[i],pad_names[i].c_str());
-            pads.emplace(pad_i2c_ids[i],new AirSkinPad(i2c_master,2*pad_i2c_ids[i], pad_names[i]));
+            pads.emplace(pad_i2c_ids[i],std::make_unique<AirSkinPad>(i2c_master,2*pad_i2c_ids[i], pad_names[i]));
         }
         size_t ok_cnt = 0;
         for(const auto& pad : pads)
@@ -40,7 +47,7 @@ namespace tuw
 
         pressures_pub = nh.advertise<tuw_airskin_msgs::AirskinPressures>("airskin_pressures",1);
         colors_sub = nh.subscribe<tuw_airskin_msgs::AirskinColors>("airskin_colors", 1, &AirSkinNodelet::colorsCallback, this );
-        timer_ = nh.createTimer(ros::Duration(0.01), boost::bind(& AirSkinNodelet::timerCallback, this, _1));
+        timer_ = nh.createTimer(ros::Duration(0.001), boost::bind(& AirSkinNodelet::timerCallback, this, _1));
     }
     
     void AirSkinNodelet::colorsCallback(const tuw_airskin_msgs::AirskinColors::ConstPtr& colors) {
