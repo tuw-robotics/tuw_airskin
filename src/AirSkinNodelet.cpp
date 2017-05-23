@@ -47,7 +47,7 @@ namespace tuw
 
         pressures_pub = nh.advertise<tuw_airskin_msgs::AirskinPressures>("airskin_pressures",1);
         colors_sub = nh.subscribe<tuw_airskin_msgs::AirskinColors>("airskin_colors", 1, &AirSkinNodelet::colorsCallback, this );
-        timer_ = nh.createTimer(ros::Duration(0.001), boost::bind(& AirSkinNodelet::timerCallback, this, _1));
+        timer_ = nh.createTimer(ros::Duration(0.1), boost::bind(& AirSkinNodelet::timerCallback, this, _1));
     }
     
     void AirSkinNodelet::colorsCallback(const tuw_airskin_msgs::AirskinColors::ConstPtr& colors) {
@@ -73,7 +73,12 @@ namespace tuw
             pad.second->update();
             pressures.ids.emplace_back(pad.second->getAddr());
             pressures.pressures.emplace_back(pad.second->getPressure());
-            pressures.names.emplace_back(pad.second->getName());
+            std::string frame_id = tf::resolve(ros::this_node::getNamespace(),pad.second->getName());
+            if(!tf_listener_.frameExists(frame_id)) {
+                NODELET_ERROR("Frame: '%s' does not exist.",frame_id.c_str());
+            } else {
+                pressures.frame_ids.emplace_back(frame_id);
+            }
         }
         pressures_pub.publish(pressures);
     }

@@ -1,7 +1,9 @@
 <launch>  
-  <node pkg="nodelet" type="nodelet" name="standalone_nodelet"  args="manager" output="screen"/>
-
-  <node pkg="nodelet" type="nodelet" name="AirSkinNodelet" args="load tuw/AirSkinNodelet standalone_nodelet" output="screen">
+  <arg name="robot_name" default="p3dx" />
+  <group ns="$(arg robot_name)">
+    <node pkg="nodelet" type="nodelet" name="standalone_nodelet"  args="manager" output="screen"/>
+    <node pkg="nodelet" type="nodelet" name="AirSkinNodelet" args="load tuw/AirSkinNodelet standalone_nodelet" output="screen">
     <rosparam command="load" file="$(find tuw_airskin)/cfg/airskin.yaml" />
-  </node>                 
+    </node>                 
+  </group>
 </launch>

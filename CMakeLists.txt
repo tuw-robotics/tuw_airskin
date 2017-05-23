@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(tuw_airskin)
 
 
-add_compile_options(-std=c++14 -g3)
+add_compile_options(-std=c++14 -g)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   tuw_airskin_msgs
+  tf
 )
 
 ## System dependencies are found with CMake's conventions

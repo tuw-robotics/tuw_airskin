@@ -4,7 +4,7 @@
 #include <airskin_nodelet/AirSkinPad.h>
 #include <tuw_airskin_msgs/AirskinColors.h>
 #include <tuw_airskin_msgs/AirskinPressures.h>
-
+#include <tf/transform_listener.h>
 namespace tuw
 {
 
@@ -25,6 +25,7 @@ namespace tuw
             ros::Timer timer_;
             void timerCallback(const ros::TimerEvent& event);
             void colorsCallback(const tuw_airskin_msgs::AirskinColors::ConstPtr& colors);
+            tf::TransformListener tf_listener_;
     };
 
 }

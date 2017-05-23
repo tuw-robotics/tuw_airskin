@@ -4,6 +4,6 @@
 i2c_device: "UM232H-B"
 #i2c_device: "/dev/ttyACM0"
 
-#Vectors of I2C addresses and corresponding names
+#Vectors of (7-bit) I2C addresses and corresponding names
 pad_i2c_ids: [0x04,0x05,0x06,0x07]
-pad_names: ["left-front","left-back","right-front","right-back"]
+pad_names: ["airskin_right","airskin_right_front","airskin_left_front","airskin_left"]
