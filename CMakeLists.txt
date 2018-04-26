@@ -127,7 +127,9 @@ include_directories(include
 
 ## Declare a C++ library
 add_library(tuw_airskin  src/AirSkin_Sense.cc src/AirSkinPad.cpp src/I2C_Master.cc  src/I2C_Master_Devantech_ISS.cc  src/kbhit.cc
-  src/Except.cc  src/I2C_Master_Devantech.cc  src/I2C_Master_MPSSE.cpp src/I2C_Slave.cc src/AirSkinNodelet.cpp
+  src/Except.cc  src/I2C_Master_Devantech.cc  
+	#src/I2C_Master_MPSSE.cpp 
+  src/I2C_Slave.cc src/AirSkinNodelet.cpp
 )
 
 
@@ -146,7 +148,7 @@ add_dependencies(tuw_airskin ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORT
 ## Specify libraries to link a library or executable target against
 target_link_libraries(tuw_airskin
    ${catkin_LIBRARIES}
-   mpsse
+   #mpsse
 )
 
 #############

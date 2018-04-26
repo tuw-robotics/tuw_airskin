@@ -1,6 +1,6 @@
 #include <pluginlib/class_list_macros.h>
 #include <airskin_nodelet/AirSkinNodelet.h>
-#include <airskin_nodelet/I2C_Master_MPSSE.h>
+//#include <airskin_nodelet/I2C_Master_MPSSE.h>
 #include <airskin_nodelet/I2C_Master_Devantech_ISS.h>
 #include <string>
 #include <memory>
@@ -14,7 +14,7 @@ namespace tuw
         NODELET_INFO("Initializing AirSkinNodelet...");
         NODELET_INFO("Opening I2C device: '%s'",device_file_name.c_str());
         if(device_file_name == "UM232H-B") {
-            i2c_master = std::make_shared<I2C_Master_MPSSE>();
+            //i2c_master = std::make_shared<I2C_Master_MPSSE>();
         } else {
             i2c_master = std::make_shared<I2C_Master_Devantech_ISS>();
          NODELET_INFO("Devantech USB-ISS adapter, rev. %d",
@@ -74,11 +74,11 @@ namespace tuw
             pressures.ids.emplace_back(pad.second->getAddr());
             pressures.pressures.emplace_back(pad.second->getPressure());
             std::string frame_id = tf::resolve(ros::this_node::getNamespace(),pad.second->getName());
-            if(!tf_listener_.frameExists(frame_id)) {
-                NODELET_ERROR("Frame: '%s' does not exist.",frame_id.c_str());
-            } else {
+            //if(!tf_listener_.frameExists(frame_id)) {
+            //    NODELET_ERROR("Frame: '%s' does not exist.",frame_id.c_str());
+            //} else {
                 pressures.frame_ids.emplace_back(frame_id);
-            }
+            //}
         }
         pressures_pub.publish(pressures);
     }

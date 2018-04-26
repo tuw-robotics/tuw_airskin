@@ -1,9 +1,11 @@
 #I2C device
 #In case of UM232H-B use "UM232H-B"
 #In case of Devantech USB-ISS use according serial device path (e.g. "/dev/ttyACM0")
-i2c_device: "UM232H-B"
-#i2c_device: "/dev/ttyACM0"
+#i2c_device: "UM232H-B"
+i2c_device: "/dev/ttyACM0"
 
 #Vectors of (7-bit) I2C addresses and corresponding names
 pad_i2c_ids: [0x04,0x05,0x06,0x07]
-pad_names: ["airskin_right","airskin_right_front","airskin_left_front","airskin_left"]
+#pad_i2c_ids: [0x04,0x05,0x06]
+#pad_names: ["airskin_center","airskin_left_front","airskin_right_front"]
+pad_names: ["airskin_right","airskin_left_front","airskin_right_front","airskin_left"]
