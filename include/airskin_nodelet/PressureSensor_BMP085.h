@@ -1,5 +1,5 @@
 /*
- * Driver for the BMP085 pressure/temperature sensor. 
+ * Driver for the BMP085 pressure/temperature sensor.
  * based on code by: Jim Lindblom, SparkFun Electronics
  */
 
@@ -21,12 +21,12 @@ class PressureSensor_BMP085 : public I2C_Slave
 private:
   // calibration data
   int32_t ac1;
-  int32_t ac2; 
-  int32_t ac3; 
+  int32_t ac2;
+  int32_t ac3;
   uint32_t ac4;
   uint32_t ac5;
   uint32_t ac6;
-  int32_t b1; 
+  int32_t b1;
   int32_t b2;
   int32_t mb;
   int32_t mc;
@@ -46,4 +46,3 @@ public:
 };
 
 #endif
-

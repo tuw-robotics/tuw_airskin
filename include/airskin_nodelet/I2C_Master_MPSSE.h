@@ -29,19 +29,13 @@ public:
 
   virtual ~I2C_Master_MPSSE();
 
-  virtual void Write(unsigned char addr, unsigned char nbytes,
-      const unsigned char data[]); 
+  virtual void Write(unsigned char addr, unsigned char nbytes, const unsigned char data[]);
 
-  virtual void WriteRegister(unsigned char addr, unsigned char reg,
-      unsigned char nbytes, const unsigned char data[]); 
+  virtual void WriteRegister(unsigned char addr, unsigned char reg, unsigned char nbytes, const unsigned char data[]);
 
-  virtual void Read(unsigned char addr, unsigned char nbytes,
-      unsigned char data[]);
+  virtual void Read(unsigned char addr, unsigned char nbytes, unsigned char data[]);
 
-  virtual void ReadRegister(unsigned char addr, unsigned char reg,
-      unsigned char nbytes, unsigned char data[]);
+  virtual void ReadRegister(unsigned char addr, unsigned char reg, unsigned char nbytes, unsigned char data[]);
 };
 
 #endif
-
-

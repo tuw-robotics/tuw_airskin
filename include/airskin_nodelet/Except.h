@@ -42,16 +42,16 @@
  * in the constructor.
  */
 #ifndef THROW
-#define THROW(ex,msg)\
-{\
-  std::ostringstream os;\
-  os << __THIS_FILE__ << ':' << __FUNCTION__ << ':' << __LINE__ << ": " << msg;\
-  throw ex(os.str());\
-}
+#define THROW(ex, msg)                                                                                                 \
+  {                                                                                                                    \
+    std::ostringstream os;                                                                                             \
+    os << __THIS_FILE__ << ':' << __FUNCTION__ << ':' << __LINE__ << ": " << msg;                                      \
+    throw ex(os.str());                                                                                                \
+  }
 #endif
 
 #ifndef __HERE__
-#define __HERE__   __THIS_FILE__, __FUNCTION__, __LINE__
+#define __HERE__ __THIS_FILE__, __FUNCTION__, __LINE__
 #endif
 
 /**
@@ -72,12 +72,18 @@ private:
   std::string _what;
 
 public:
-  Except(const char *file, const char *function, int line,
-         const char *format, ...) throw();
-  virtual ~Except() throw() {}
-  virtual const char* what() const throw() {return _what.c_str();}
-  void Set(const std::string &s) {_what = s;}
+  Except(const char *file, const char *function, int line, const char *format, ...) throw();
+  virtual ~Except() throw()
+  {
+  }
+  virtual const char *what() const throw()
+  {
+    return _what.c_str();
+  }
+  void Set(const std::string &s)
+  {
+    _what = s;
+  }
 };
 
 #endif
-

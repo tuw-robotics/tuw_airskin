@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tuw_airskin_msgs
   tf
+  tuw_nav_msgs
+  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -91,10 +93,9 @@ find_package(catkin REQUIRED COMPONENTS
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
-#   cfg/DynReconf2.cfg
-# )
+generate_dynamic_reconfigure_options(
+  cfg/AirSkinControlNodelet.cfg
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -112,6 +113,7 @@ catkin_package(
   roscpp
   std_msgs
   tuw_airskin_msgs
+  tuw_nav_msgs
 #  DEPENDS system_lib
 )
 
@@ -126,10 +128,18 @@ include_directories(include
 )
 
 ## Declare a C++ library
-add_library(tuw_airskin  src/AirSkin_Sense.cc src/AirSkinPad.cpp src/I2C_Master.cc  src/I2C_Master_Devantech_ISS.cc  src/kbhit.cc
-  src/Except.cc  src/I2C_Master_Devantech.cc  
-	#src/I2C_Master_MPSSE.cpp 
-  src/I2C_Slave.cc src/AirSkinNodelet.cpp
+add_library(tuw_airskin  
+                  src/AirSkin_Sense.cc 
+                  src/AirSkinPad.cpp 
+                  src/I2C_Master.cc  
+                  src/I2C_Master_Devantech_ISS.cc  
+                  src/kbhit.cc
+                  src/Except.cc  
+                  src/I2C_Master_Devantech.cc  
+                  #src/I2C_Master_MPSSE.cpp 
+                  src/I2C_Slave.cc 
+                  src/AirSkinNodelet.cpp 
+                  src/AirSkinControlNodelet.cpp
 )
 
 

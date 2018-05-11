@@ -20,4 +20,3 @@ extern void kbhit_disable();
 extern bool kbhit();
 
 #endif
-

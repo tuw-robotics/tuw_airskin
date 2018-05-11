@@ -32,12 +32,12 @@ public:
    */
   bool fill(int val)
   {
-    if(numFilled < history.size())
+    if (numFilled < history.size())
     {
       history[pos] = val;
-      mean += (float)history[pos]/(float)history.size();
+      mean += (float)history[pos] / (float)history.size();
       pos++;
-      if(pos >= history.size())
+      if (pos >= history.size())
         pos -= history.size();
       numFilled++;
       return false;
@@ -50,12 +50,12 @@ public:
   void updateMean(int val)
   {
     // remove oldest
-    mean -= (float)history[pos]/(float)history.size();
+    mean -= (float)history[pos] / (float)history.size();
     // and add new
     history[pos] = val;
-    mean += (float)history[pos]/(float)history.size();
+    mean += (float)history[pos] / (float)history.size();
     pos++;
-    if(pos >= history.size())
+    if (pos >= history.size())
       pos -= history.size();
   }
   float getMean()
@@ -67,7 +67,7 @@ public:
 class AirSkinPad
 {
 private:
-  static const int VALID_PRESSURE_MIN =  90000;
+  static const int VALID_PRESSURE_MIN = 90000;
   static const int VALID_PRESSURE_MAX = 300000;
   static const int HISTORY_SIZE = 50;
   static const int ACTIVATION_THR = 50;
@@ -76,11 +76,11 @@ private:
 
   AirSkin_Sense sensor;
   RunningMean mean;
-  unsigned char addr;  // 8 Bit I2C address
-  std::string name;         // readable name of respective pad
-  int p;               // current pressure
-  bool is_activated;   // activation status
-  bool ref_is_frozen;  // true if reference value update is frozen
+  unsigned char addr;            // 8 Bit I2C address
+  std::string name;              // readable name of respective pad
+  int p;                         // current pressure
+  bool is_activated;             // activation status
+  bool ref_is_frozen;            // true if reference value update is frozen
   ros::Time ref_unfreeze_timer;  // we unfreeze the reference value a little bit after a release
 
   void updateReference()
@@ -103,7 +103,7 @@ public:
   }
   unsigned char getAddr()
   {
-    return addr/2;
+    return addr / 2;
   }
   bool isActivated()
   {

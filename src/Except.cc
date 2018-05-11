@@ -24,8 +24,7 @@
  * @param line     (in) __LINE__ macro
  * @param format   (in) printf-style format string
  */
-Except::Except(const char *file, const char *function, int line,
-               const char *format, ...) throw()
+Except::Except(const char *file, const char *function, int line, const char *format, ...) throw()
 {
   static char what[1024];
   static char msg[1024];
@@ -41,11 +40,10 @@ Except::Except(const char *file, const char *function, int line,
   // exception
   void *array[25];
   int n = backtrace(array, 25);
-  char ** symbols = backtrace_symbols(array, n);
+  char **symbols = backtrace_symbols(array, n);
   printf("* throwing exception, function backtrace:\n");
   for (int i = 0; i < n; i++)
     printf("%s\n", symbols[i]);
   free(symbols);
 #endif
 }
-

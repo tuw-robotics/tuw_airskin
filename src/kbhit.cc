@@ -36,7 +36,7 @@ static void changemode(bool on)
   // NOTE: the static structs mean this is not thread-safe!
   static struct termios oldt, newt;
 
-  if(on)
+  if (on)
   {
     tcgetattr(STDIN_FILENO, &oldt);
     newt = oldt;
@@ -70,7 +70,6 @@ bool kbhit()
   FD_ZERO(&rdfs);
   FD_SET(STDIN_FILENO, &rdfs);
 
-  select(STDIN_FILENO+1, &rdfs, NULL, NULL, &tv);
+  select(STDIN_FILENO + 1, &rdfs, NULL, NULL, &tv);
   return FD_ISSET(STDIN_FILENO, &rdfs);
 }
-

@@ -23,8 +23,6 @@ public:
   int ReadRawPressure();
   int ReadFilteredPressure();
   void SetColor(unsigned char red, unsigned char green, unsigned char blue);
-
 };
 
 #endif
-

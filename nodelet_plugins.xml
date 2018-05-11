@@ -1,7 +1,12 @@
 <library path="lib/libtuw_airskin">
   <class name="tuw/AirSkinNodelet" type="tuw::AirSkinNodelet" base_class_type="nodelet::Nodelet">
-  <description>
-  This is my nodelet.
-  </description>
+    <description>
+      This is my nodelet.
+    </description>
+  </class>
+  <class name="tuw/AirSkinControlNodelet" type="tuw::AirSkinControlNodelet" base_class_type="nodelet::Nodelet">
+    <description>
+      This is my nodelet.
+    </description>
   </class>
 </library>

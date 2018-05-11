@@ -12,21 +12,21 @@
 #include <airskin_nodelet/I2C_Master_Devantech.h>
 
 // Read/Write single byte for non-registered devices,
-#define I2C_SGL           0x53
+#define I2C_SGL 0x53
 // Read multiple bytes without setting new address
-#define I2C_MUL           0x54
+#define I2C_MUL 0x54
 // Read/Write single or multiple bytes for 1 byte addressed devices (the
 // majority of devices will use this one)
-#define I2C_AD1           0x55
+#define I2C_AD1 0x55
 // Read/Write single or multiple bytes for 2 byte addressed devices, eeproms
 // from 32kbit (4kx8) and up
-#define I2C_AD2           0x56
+#define I2C_AD2 0x56
 // A range of commands to the USB-I2C module, generally to improve selected
 // communications or provide analogue/digital I/O
-#define I2C_USB           0x5A
+#define I2C_USB 0x5A
 // The only of those "special" commands we use: Returns the USB-I2C firmware
 // revision number
-#define I2C_USB_REVISION  0x01
+#define I2C_USB_REVISION 0x01
 
 I2C_Master_Devantech::I2C_Master_Devantech(const std::string &device_file)
 {
@@ -39,14 +39,14 @@ I2C_Master_Devantech::I2C_Master_Devantech(const std::string &device_file)
   // data is transferred. For our very small data packages (a few bytes) this
   // does make sense.
   serial_fd = open(device_file.c_str(), O_RDWR | O_NOCTTY | O_DSYNC | O_FSYNC);
-  if(serial_fd == -1)
+  if (serial_fd == -1)
     throw Except(__HERE__, "failed to open device '%s'", device_file.c_str());
 
   tcgetattr(serial_fd, &termios_param);
 
   cfsetispeed(&termios_param, baudrate);
   cfsetospeed(&termios_param, baudrate);
- 
+
   // ignore modem control lines
   termios_param.c_cflag |= CLOCAL;
   // activate receiver
@@ -54,7 +54,7 @@ I2C_Master_Devantech::I2C_Master_Devantech(const std::string &device_file)
   // disable parity
   termios_param.c_cflag &= ~PARENB;
   // 2 stop bits
-  termios_param.c_cflag |= CSTOPB; 
+  termios_param.c_cflag |= CSTOPB;
   // character size mask
   termios_param.c_cflag &= ~CSIZE;
   // 8 data bits
@@ -76,7 +76,7 @@ I2C_Master_Devantech::I2C_Master_Devantech(const std::string &device_file)
   // IXOFF: Enable XON/XOFF flow control on input
   termios_param.c_iflag &= ~(IXON | IXOFF | IXANY);
 
-  // OPOST Enable implementation-defined output processing. 
+  // OPOST Enable implementation-defined output processing.
   termios_param.c_oflag &= ~OPOST;
 
   // VMIN: Minimum number of characters for non-canonical read.
@@ -111,10 +111,9 @@ int I2C_Master_Devantech::GetFirmwareVersion()
   return (int)buf[0];
 }
 
-void I2C_Master_Devantech::Write(unsigned char addr, 
-    unsigned char nbytes, const unsigned char data[])
+void I2C_Master_Devantech::Write(unsigned char addr, unsigned char nbytes, const unsigned char data[])
 {
-  if(nbytes <= 0)
+  if (nbytes <= 0)
     throw Except(__HERE__, "number of bytes to send must be > 0");
   unsigned char buf[4 + nbytes];
   // note: Unfortunately there is no command analogous to I2C_MUL for _writing_
@@ -128,15 +127,15 @@ void I2C_Master_Devantech::Write(unsigned char addr,
   // bytes starting with a byte containing the register followed by data bytes.
   // So we take our first data byte to be the "register".
   buf[2] = data[0];
-  buf[3] = nbytes-1;
-  memcpy(&buf[4], &(data[1]), (size_t)nbytes-1);
+  buf[3] = nbytes - 1;
+  memcpy(&buf[4], &(data[1]), (size_t)nbytes - 1);
   CheckedWrite(serial_fd, buf, 4 + nbytes);
-  if(!ReadACK())
+  if (!ReadACK())
     throw Except(__HERE__, "command failed");
 }
 
-void I2C_Master_Devantech::WriteRegister(unsigned char addr, unsigned char reg,
-    unsigned char nbytes, const unsigned char data[])
+void I2C_Master_Devantech::WriteRegister(unsigned char addr, unsigned char reg, unsigned char nbytes,
+                                         const unsigned char data[])
 {
   unsigned char buf[4 + nbytes];
   // this is how the Devantech USB-I2C device normally expects communication to
@@ -147,12 +146,11 @@ void I2C_Master_Devantech::WriteRegister(unsigned char addr, unsigned char reg,
   buf[3] = nbytes;
   memcpy(&buf[4], data, (size_t)nbytes);
   CheckedWrite(serial_fd, buf, 4 + nbytes);
-  if(!ReadACK())
+  if (!ReadACK())
     throw Except(__HERE__, "command failed");
 }
 
-void I2C_Master_Devantech::Read(unsigned char addr,
-    unsigned char nbytes, unsigned char data[])
+void I2C_Master_Devantech::Read(unsigned char addr, unsigned char nbytes, unsigned char data[])
 {
   unsigned char buf[3];
   // use I2C_MUL to read multiple byte from a device without registers
@@ -163,8 +161,8 @@ void I2C_Master_Devantech::Read(unsigned char addr,
   CheckedRead(serial_fd, data, (size_t)nbytes);
 }
 
-void I2C_Master_Devantech::ReadRegister(unsigned char addr, unsigned char reg,
-    unsigned char nbytes, unsigned char data[])
+void I2C_Master_Devantech::ReadRegister(unsigned char addr, unsigned char reg, unsigned char nbytes,
+                                        unsigned char data[])
 {
   unsigned char buf[4];
   // this is how the Devantech USB-I2C device normally expects communication to
@@ -176,4 +174,3 @@ void I2C_Master_Devantech::ReadRegister(unsigned char addr, unsigned char reg,
   CheckedWrite(serial_fd, buf, 4);
   CheckedRead(serial_fd, data, (size_t)nbytes);
 }
-

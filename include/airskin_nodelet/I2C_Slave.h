@@ -12,8 +12,10 @@ protected:
 
 public:
   I2C_Slave(std::shared_ptr<I2C_Master> &_master, unsigned char _addr);
-  unsigned char GetAddress() {return addr;}
+  unsigned char GetAddress()
+  {
+    return addr;
+  }
 };
 
 #endif
-

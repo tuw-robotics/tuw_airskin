@@ -9,8 +9,7 @@
 #include <nodelet/nodelet.h>
 #include <memory>
 
-AirSkin_Sense::AirSkin_Sense(std::shared_ptr<I2C_Master> &_master, unsigned char _addr)
-  : I2C_Slave(_master, _addr)
+AirSkin_Sense::AirSkin_Sense(std::shared_ptr<I2C_Master> &_master, unsigned char _addr) : I2C_Slave(_master, _addr)
 {
 }
 
@@ -36,17 +35,15 @@ int AirSkin_Sense::ReadFilteredPressure()
   return (int)p;
 }
 
-
 void AirSkin_Sense::SetColor(unsigned char red, unsigned char green, unsigned char blue)
 {
-    unsigned char b[1];
-    
-    using namespace ros::this_node;
-    b[0] = red;
-    master->WriteRegister(addr,0x22,1,b);
-    b[0] = green;
-    master->WriteRegister(addr,0x23,1,b);
-    b[0] = blue;
-    master->WriteRegister(addr,0x24,1,b);
-}
+  unsigned char b[1];
 
+  using namespace ros::this_node;
+  b[0] = red;
+  master->WriteRegister(addr, 0x22, 1, b);
+  b[0] = green;
+  master->WriteRegister(addr, 0x23, 1, b);
+  b[0] = blue;
+  master->WriteRegister(addr, 0x24, 1, b);
+}
