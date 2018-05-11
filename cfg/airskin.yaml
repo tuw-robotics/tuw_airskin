@@ -16,3 +16,6 @@ pad_name_right: "airskin_right"
 pad_name_left: "airskin_left"
 wheel_radius              : 0.097
 wheel_displacement        : 0.33
+
+pressures_min: [ 100250, 100250, 100250, 100250 ]
+pressures_max: [ 100750, 100750, 100750, 100750 ]

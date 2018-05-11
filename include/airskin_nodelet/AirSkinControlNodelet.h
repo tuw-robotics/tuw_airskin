@@ -31,8 +31,8 @@ private:
   std::map<std::string, int> pads_;
   std::string pad_name_left_;
   std::string pad_name_right_;
-  std::vector<unsigned int> pressures_min_;
-  std::vector<unsigned int> pressures_max_;
+  std::vector<int> pressures_min_;
+  std::vector<int> pressures_max_;
   double w_max_;
   double wheel_radius_;
   double wheel_displacement_;

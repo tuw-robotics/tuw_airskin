@@ -16,6 +16,7 @@
     <group if="$(arg launch_control)" >
       <node pkg="nodelet" type="nodelet" name="AirSkinControlNodelet" args="load tuw/AirSkinControlNodelet airskin_manager" output="screen" >
         <rosparam command="load" file="$(find tuw_airskin)/cfg/airskin.yaml" />
+        <remap from="AirSkinControlNodelet/airskin_pressures" to="AirSkinNodelet/airskin_pressures" />
         <param name="publish_joint" value="$(arg publish_joint)" />
       </node>
     </group> 

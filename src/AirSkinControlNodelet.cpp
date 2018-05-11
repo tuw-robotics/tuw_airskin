@@ -18,6 +18,8 @@ void AirSkinControlNodelet::onInit()
   nh_.param("wheel_radius", wheel_radius_, 0.097);
   nh_.param("wheel_displacement", wheel_displacement_, 0.33);
   nh_.param("publish_joint", publish_joint_, false);
+  nh_.param("pressures_min", pressures_min_, std::vector<int>());
+  nh_.param("pressures_max", pressures_max_, std::vector<int>());
 
   for (int i = 0; i < pad_names_.size(); i++)
   {
@@ -26,12 +28,12 @@ void AirSkinControlNodelet::onInit()
 
   colors_pub_ = nh_.advertise<tuw_airskin_msgs::AirskinColors>("airskin_colors", 1);
   joint_pub_ = nh_.advertise<tuw_nav_msgs::JointsIWS>("/r0/joint_cmds", 1);
-  twist_pub_ = nh_.advertise<tuw_nav_msgs::JointsIWS>("/r0/cmd_vel", 1);
+  twist_pub_ = nh_.advertise<geometry_msgs::Twist>("/r0/cmd_vel", 1);
   pressures_sub_ = nh_.subscribe<tuw_airskin_msgs::AirskinPressures>("airskin_pressures", 1,
                                                                      &AirSkinControlNodelet::pressuresCallback, this);
 
-  pressures_min_ = std::vector<unsigned int>(pad_names_.size(), std::numeric_limits<unsigned int>::max());
-  pressures_max_ = std::vector<unsigned int>(pad_names_.size(), std::numeric_limits<unsigned int>::min());
+  //pressures_min_ = std::vector<unsigned int>(pad_names_.size(), std::numeric_limits<unsigned int>::max());
+  //pressures_max_ = std::vector<unsigned int>(pad_names_.size(), std::numeric_limits<unsigned int>::min());
 }
 
 void AirSkinControlNodelet::pressuresCallback(const tuw_airskin_msgs::AirskinPressures::ConstPtr &pressures)
@@ -46,16 +48,25 @@ void AirSkinControlNodelet::pressuresCallback(const tuw_airskin_msgs::AirskinPre
     // std::cout << "pressures_min_[" << i << "] = " << pressures_min_[i] << std::endl;
     // std::cout << "pressures_max_[" << i << "] = " << pressures_max_[i] << std::endl;
 
-    if (pressures->pressures[i] < pressures_min_[i])
-      pressures_min_[i] = pressures->pressures[i];
+    //if (pressures->pressures[i] < pressures_min_[i])
+    //  pressures_min_[i] = pressures->pressures[i];
 
-    if (pressures->pressures[i] > pressures_max_[i])
-      pressures_max_[i] = pressures->pressures[i];
+    //if (pressures->pressures[i] > pressures_max_[i])
+    //  pressures_max_[i] = pressures->pressures[i];
 
     // scale pressure to 0 - 1
+
+    int pressure_thres = 0;
+    if((int)pressures->pressures[i] < pressures_min_[i])
+      pressure_thres = pressures_min_[i];
+    else if((int)pressures->pressures[i] > pressures_max_[i])
+      pressure_thres = pressures_max_[i];
+    else
+      pressure_thres = (int)pressures->pressures[i];
+
     if (pressures_max_[i] - pressures_min_[i] > 0)
       pressures_normalized[i] =
-          (double)(pressures->pressures[i] - pressures_min_[i]) / (double)(pressures_max_[i] - pressures_min_[i]);
+          (double)(pressure_thres - pressures_min_[i]) / (double)(pressures_max_[i] - pressures_min_[i]);
   }
 
   // generate control output
@@ -81,7 +92,7 @@ void AirSkinControlNodelet::pressuresCallback(const tuw_airskin_msgs::AirskinPre
 
   geometry_msgs::Twist twist;
   twist.linear.x = v;
-  twist.linear.z = w;
+  twist.angular.z = w;
 
   if (publish_joint_)
     joint_pub_.publish(joint);
