@@ -19,7 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS system)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -95,6 +95,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
 generate_dynamic_reconfigure_options(
   cfg/AirSkinControlNodelet.cfg
+  cfg/AirSkinColorNodelet.cfg
 )
 
 ###################################
@@ -137,9 +138,12 @@ add_library(tuw_airskin
                   src/Except.cc  
                   src/I2C_Master_Devantech.cc  
                   #src/I2C_Master_MPSSE.cpp 
-                  src/I2C_Slave.cc 
-                  src/AirSkinNodelet.cpp 
+                  src/I2C_Slave.cc
+                  src/AirSkinNodelet.cpp )
+                  
+add_library(tuw_airskin_tools  
                   src/AirSkinControlNodelet.cpp
+                  src/AirSkinColorNodelet.cpp
 )
 
 
@@ -147,16 +151,40 @@ add_library(tuw_airskin
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
 add_dependencies(tuw_airskin ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(tuw_airskin_tools ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-# add_executable(tuw_airskin src/tuw_airskin.cpp)
+add_executable(tuw_airskin_node src/AirSkinNode.cpp)
+add_executable(tuw_airskin_control_node src/AirSkinControlNode.cpp)
+add_executable(tuw_airskin_color_node src/AirSkinColorNode.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(tuw_airskin ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(tuw_airskin_node tuw_airskin ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(tuw_airskin_control_node tuw_airskin_tools ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(tuw_airskin_color_node tuw_airskin_tools ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(tuw_airskin
+   ${catkin_LIBRARIES}
+   #mpsse
+)
+target_link_libraries(tuw_airskin_tools
+   ${catkin_LIBRARIES}
+   #mpsse
+)
+target_link_libraries(tuw_airskin_node
+   tuw_airskin
+   ${catkin_LIBRARIES}
+   #mpsse
+)
+target_link_libraries(tuw_airskin_control_node
+   tuw_airskin_tools
+   ${catkin_LIBRARIES}
+   #mpsse
+)
+target_link_libraries(tuw_airskin_color_node
+   tuw_airskin_tools
    ${catkin_LIBRARIES}
    #mpsse
 )
@@ -176,11 +204,11 @@ target_link_libraries(tuw_airskin
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS airskin_nodelet tuw_airskin
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+install(TARGETS tuw_airskin tuw_airskin_tools
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ## Mark cpp header files for installation
 # install(DIRECTORY include/${PROJECT_NAME}/
@@ -190,11 +218,10 @@ target_link_libraries(tuw_airskin
 # )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
+install(FILES
+    nodelet_plugins.xml
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
 
 #############
 ## Testing ##

@@ -5,89 +5,93 @@
 #include <string>
 #include <memory>
 
-namespace tuw
-{
-void AirSkinNodelet::onInit()
-{
-  nh = getPrivateNodeHandle();
-  nh.param("i2c_device", device_file_name, std::string("/dev/ttyUSB0"));
-  NODELET_INFO("Initializing AirSkinNodelet...");
-  NODELET_INFO("Opening I2C device: '%s'", device_file_name.c_str());
-  if (device_file_name == "UM232H-B")
-  {
-    // i2c_master = std::make_shared<I2C_Master_MPSSE>();
-  }
-  else
-  {
-    i2c_master = std::make_shared<I2C_Master_Devantech_ISS>();
-    NODELET_INFO("Devantech USB-ISS adapter, rev. %d", i2c_master->GetFirmwareVersion());
-  }
-
-  std::vector<std::string> pad_names;
-  std::vector<int> pad_i2c_ids;
-  nh.param("pad_names", pad_names, std::vector<std::string>());
-  nh.param("pad_i2c_ids", pad_i2c_ids, std::vector<int>());
-  if (pad_names.size() < pad_i2c_ids.size())
-  {
-    for (int i = 0; i < pad_i2c_ids.size() - pad_names.size(); i++)
-    {
-      pad_names.emplace_back("no name specified");
+namespace tuw {
+void AirSkinNodelet::onInit() {
+    nh_ = getPrivateNodeHandle();
+    n_ = getNodeHandle();
+    nh_.param ( "i2c_device", device_file_name_, std::string ( "/dev/ttyUSB0" ) );
+    NODELET_INFO ( "Initializing AirSkinNodelet..." );
+    NODELET_INFO ( "Opening I2C device: '%s'", device_file_name_.c_str() );
+    if ( device_file_name_ == "UM232H-B" ) {
+        // i2c_master = std::make_shared<I2C_Master_MPSSE>();
+    } else {
+        i2c_master_ = std::make_shared<I2C_Master_Devantech_ISS>();
+        NODELET_INFO ( "Devantech USB-ISS adapter, rev. %d", i2c_master_->GetFirmwareVersion() );
     }
-  }
-  NODELET_INFO("Get pads from yaml file:");
-  for (int i = 0; i < pad_i2c_ids.size(); i++)
-  {
-    NODELET_INFO("ID: %#4x = %s", pad_i2c_ids[i], pad_names[i].c_str());
-    pads.emplace(pad_i2c_ids[i], std::make_unique<AirSkinPad>(i2c_master, 2 * pad_i2c_ids[i], pad_names[i]));
-  }
-  size_t ok_cnt = 0;
-  for (const auto& pad : pads)
-  {
-    if (pad.second->init())
-      ok_cnt++;
-  }
-  airskin_ok = (ok_cnt == pads.size());
 
-  pressures_pub = nh.advertise<tuw_airskin_msgs::AirskinPressures>("airskin_pressures", 1);
-  colors_sub =
-      nh.subscribe<tuw_airskin_msgs::AirskinColors>("airskin_colors", 1, &AirSkinNodelet::colorsCallback, this);
-  timer_ = nh.createTimer(ros::Duration(0.1), boost::bind(&AirSkinNodelet::timerCallback, this, _1));
-}
+    std::vector<std::string> pad_names;
+    std::vector<int> pad_i2c_ids;
+    nh_.param<std::string> ("frame_id", frame_id_, "airskin");
+    nh_.param ( "pad_names", pad_names, std::vector<std::string>());
+    nh_.param ( "pad_i2c_ids", pad_i2c_ids, std::vector<int>() );
+    nh_.param ( "pressures_min", pressures_min_, std::vector<int>() );
+    nh_.param ( "pressures_max", pressures_max_, std::vector<int>() );
 
-void AirSkinNodelet::colorsCallback(const tuw_airskin_msgs::AirskinColors::ConstPtr& colors)
-{
-  for (int i = 0; i < colors->ids.size(); i++)
-  {
-    const uint8_t id = colors->ids[i];
-    try
-    {
-      pads.at(id)->setColor(colors->colors[i]);
+    if ( (pad_names.size() != pad_i2c_ids.size() ) ||  (pad_names.size() !=  pressures_min_.size()) || (pad_names.size() != pressures_max_.size())) {
+        NODELET_ERROR ( "Size of pad_names (%zu), pad_i2c_ids (%zu), pressures_min (%zu) and pressures_max (%zu) do not match!",
+            pad_names.size(), pad_i2c_ids.size(), pressures_min_.size(), pressures_max_.size() );
     }
-    catch (const std::out_of_range& oor)
-    {
-      NODELET_INFO("id not found");
+    
+    NODELET_INFO ( "Get pads from yaml file:" );
+    for ( int i = 0; i < pad_i2c_ids.size(); i++ ) {
+        std::shared_ptr<AirSkinPad> pad = std::make_shared<AirSkinPad> ( i2c_master_, 2 * pad_i2c_ids[i], pad_names[i] ); 
+        if ( pad->init() ) {
+            NODELET_INFO ( "ID: %#4x = %s initialized", pad_i2c_ids[i], pad_names[i].c_str() );
+            pads_.push_back(pad);
+            pad->setColor ( 200, 255, 0 );
+        } else {
+            NODELET_WARN ( "Could not initialize ID: %#4x = %s", pad_i2c_ids[i], pad_names[i].c_str() );
+        }
+        
     }
-  }
+    airskin_pressures_.header.frame_id = frame_id_;
+    airskin_pressures_.pressures.resize ( pads_.size() );
+    airskin_pressures_.frame_ids.resize ( pads_.size() );
+    airskin_pressures_.ids.resize ( pads_.size() );
+    airskin_pressures_.min.resize ( pads_.size() );
+    airskin_pressures_.max.resize ( pads_.size() );
+
+    pub_pressures_ = n_.advertise<tuw_airskin_msgs::AirskinPressures> ( "airskin_pressures", 1 );
+    sub_colors_ = n_.subscribe<tuw_airskin_msgs::AirskinColors> ( "airskin_colors", 1, &AirSkinNodelet::colorsCallback, this );
+    timer_ = n_.createTimer ( ros::Duration ( 0.1 ), boost::bind ( &AirSkinNodelet::timerCallback, this, _1 ) );
 }
 
-void AirSkinNodelet::timerCallback(const ros::TimerEvent& event)
-{
-  tuw_airskin_msgs::AirskinPressures pressures;
+void AirSkinNodelet::colorsCallback ( const tuw_airskin_msgs::AirskinColors::ConstPtr& colors ) {
+    for ( size_t i = 0; i < colors->idx.size(); i++) {
+        uint16_t idx = colors->idx[i];
+        if( idx < pads_.size() ){
+            std::shared_ptr<AirSkinPad> pad = pads_[idx];
+            try {
+                pad->setColor ( colors->colors[i] );
+            } catch ( const std::out_of_range& oor ) {
+                NODELET_ERROR ( "Error on set colour" );
+            }
+        } else {
+            NODELET_WARN ( "could net set colour, idx=%i out of bound", idx );
+        }
+    }
+}
 
-  pressures.header.stamp = ros::Time().now();
-  for (const auto& pad : pads)
-  {
-    pad.second->update();
-    pressures.ids.emplace_back(pad.second->getAddr());
-    pressures.pressures.emplace_back(pad.second->getPressure());
-    std::string frame_id = tf::resolve(ros::this_node::getNamespace(), pad.second->getName());
-    // if(!tf_listener_.frameExists(frame_id)) {
-    //    NODELET_ERROR("Frame: '%s' does not exist.",frame_id.c_str());
-    //} else {
-    pressures.frame_ids.emplace_back(frame_id);
-    //}
-  }
-  pressures_pub.publish(pressures);
+void AirSkinNodelet::timerCallback ( const ros::TimerEvent& event ) {
+    airskin_pressures_.header.stamp = ros::Time().now();
+
+    for ( size_t i = 0; i < pads_.size(); i++) {
+        std::shared_ptr<AirSkinPad> pad = pads_[i];
+        pad->update();
+        airskin_pressures_.ids[i] = pad->getAddr();
+        airskin_pressures_.pressures[i] = pad->getPressure();
+        if ( airskin_pressures_.pressures[i] < pressures_min_[i] ) {
+            pressures_min_[i] = airskin_pressures_.pressures[i];
+        }
+        if ( airskin_pressures_.pressures[i] > pressures_max_[i] ) {
+            pressures_max_[i] = airskin_pressures_.pressures[i];
+        }
+        airskin_pressures_.min[i] =  pressures_min_[i];
+        airskin_pressures_.max[i] =  pressures_max_[i];        
+        std::string frame_id = tf::resolve ( ros::this_node::getNamespace(), pad->getName() );
+        airskin_pressures_.frame_ids[i] = frame_id;
+    }
+    pub_pressures_.publish ( airskin_pressures_ );
 }
 }
-PLUGINLIB_EXPORT_CLASS(tuw::AirSkinNodelet, nodelet::Nodelet)
+PLUGINLIB_EXPORT_CLASS ( tuw::AirSkinNodelet, nodelet::Nodelet )

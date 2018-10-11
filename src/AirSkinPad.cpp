@@ -102,5 +102,10 @@ void AirSkinPad::setColor(std_msgs::ColorRGBA color)
   uint8_t red = int(color.r * 255 * color.a);
   uint8_t green = int(color.g * 255 * color.a);
   uint8_t blue = int(color.b * 255 * color.a);
+  setColor(red, green, blue);
+}
+
+void AirSkinPad::setColor(uint8_t red, uint8_t green, uint8_t blue)
+{
   sensor.SetColor(red, green, blue);
 }

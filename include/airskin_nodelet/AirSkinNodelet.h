@@ -1,5 +1,5 @@
-#ifndef AIRSKINNODELET_H
-#define AIRSKINNODELET_H
+#ifndef TUW_AIRSKIN_NODELET_H
+#define TUW_AIRSKIN_NODELET_H
 
 #include <nodelet/nodelet.h>
 #include <ros/ros.h>
@@ -17,19 +17,22 @@ public:
   void run();
 
 private:
-  ros::NodeHandle nh;
-  ros::Publisher pressures_pub;
-  ros::Subscriber colors_sub;
-  std::string device_file_name;
-  std::shared_ptr<I2C_Master> i2c_master;
-  std::vector<AirSkinPad*> sensors;
-  std::map<uint8_t, std::unique_ptr<AirSkinPad>> pads;
-  bool airskin_ok;
+  ros::NodeHandle nh_;
+  ros::NodeHandle n_;
+  ros::Publisher pub_pressures_;
+  ros::Subscriber sub_colors_;
+  std::string device_file_name_;
+  std::string frame_id_;
+  std::vector<int> pressures_min_;
+  std::vector<int> pressures_max_;
+  std::shared_ptr<I2C_Master> i2c_master_;
+  std::vector<std::shared_ptr<AirSkinPad> > pads_;
   ros::Timer timer_;
+  tuw_airskin_msgs::AirskinPressures airskin_pressures_;
   void timerCallback(const ros::TimerEvent& event);
   void colorsCallback(const tuw_airskin_msgs::AirskinColors::ConstPtr& colors);
   tf::TransformListener tf_listener_;
 };
 }
 
-#endif  // AIRSKINNODELET_H
+#endif  // TUW_AIRSKIN_NODELET_H

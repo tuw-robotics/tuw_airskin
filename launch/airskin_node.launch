@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<launch>  
+  <arg name="robot_name" default="r0" />
+  <arg name="publish_joint" default="false" />
+  <arg name="sim" default="false" />
+  <arg name="launch_color" default="true" />
+  <arg name="launch_control" default="false" />
+  
+  <group ns="$(arg robot_name)">
+    <node pkg="tuw_airskin" type="tuw_airskin_node" name="airskin" output="screen">
+        <rosparam command="load" file="$(find tuw_airskin)/cfg/airskin.yaml" />
+    </node>
+    <group if="$(arg launch_color)" >
+        <node pkg="tuw_airskin" type="tuw_airskin_color_node" name="airskin_control" output="screen" />
+    </group> 
+    <group if="$(arg launch_control)" >
+        <node pkg="tuw_airskin" type="tuw_airskin_control_node" name="airskin_control" output="screen">
+            <rosparam command="load" file="$(find tuw_airskin)/cfg/airskin.yaml" />
+            <param name="publish_joint" value="$(arg publish_joint)" />
+        </node>
+    </group> 
+  </group>
+</launch>

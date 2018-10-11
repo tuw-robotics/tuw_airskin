@@ -1,12 +1,19 @@
 <library path="lib/libtuw_airskin">
   <class name="tuw/AirSkinNodelet" type="tuw::AirSkinNodelet" base_class_type="nodelet::Nodelet">
     <description>
-      This is my nodelet.
+      This nodelet manages the airskin hardware
     </description>
   </class>
+</library>
+<library path="lib/libtuw_airskin_tools">
   <class name="tuw/AirSkinControlNodelet" type="tuw::AirSkinControlNodelet" base_class_type="nodelet::Nodelet">
     <description>
-      This is my nodelet.
+      This nodelet is used to control the vehicle based on airskin msgs
+    </description>
+  </class>
+  <class name="tuw/AirSkinColorNodelet" type="tuw::AirSkinColorNodelet" base_class_type="nodelet::Nodelet">
+    <description>
+      This nodelet is used to change the airskin colour based on airskin msgs
     </description>
   </class>
 </library>

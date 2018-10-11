@@ -8,14 +8,8 @@ i2c_device: "/dev/ttyACM0"
 pad_i2c_ids: [0x04,0x05,0x06,0x07]
 #pad_i2c_ids: [0x04,0x05,0x06]
 #pad_names: ["airskin_center","airskin_left_front","airskin_right_front"]
-pad_names: ["airskin_right","airskin_left_front","airskin_right_front","airskin_left"]
+pad_names: ["airskin_right", "airskin_left_front", "airskin_right_front", "airskin_left"]
 
 # for AirSkinControl:
-
-pad_name_right: "airskin_right"
-pad_name_left: "airskin_left"
-wheel_radius              : 0.097
-wheel_displacement        : 0.33
-
 pressures_min: [ 100250, 100250, 100250, 100250 ]
 pressures_max: [ 100750, 100750, 100750, 100750 ]
