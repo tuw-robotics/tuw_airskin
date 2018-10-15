@@ -19,7 +19,7 @@ void AirSkinControlNodelet::onInit()
     pads_.emplace(pad_names_[i], i);
   }
 
-  pub_twist_ = n_.advertise<geometry_msgs::Twist>("airskin_cmd", 1);
+  pub_cmd_twist_ = n_.advertise<geometry_msgs::Twist>("airskin_cmd", 1);
   sub_pressures_ = n_.subscribe<tuw_airskin_msgs::AirskinPressures>("airskin_pressures", 1, &AirSkinControlNodelet::pressuresCallback, this);
 }
 

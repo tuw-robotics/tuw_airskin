@@ -24,6 +24,7 @@ void AirSkinNodelet::onInit() {
     nh_.param<std::string> ("frame_id", frame_id_, "airskin");
     nh_.param ( "pad_names", pad_names, std::vector<std::string>());
     nh_.param ( "pad_i2c_ids", pad_i2c_ids, std::vector<int>() );
+    nh_.param ( "contact_treshold", contact_treshold_, 0.3 );
     nh_.param ( "pressures_min", pressures_min_, std::vector<int>() );
     nh_.param ( "pressures_max", pressures_max_, std::vector<int>() );
 
@@ -52,6 +53,8 @@ void AirSkinNodelet::onInit() {
     airskin_pressures_.max.resize ( pads_.size() );
 
     pub_pressures_ = n_.advertise<tuw_airskin_msgs::AirskinPressures> ( "airskin_pressures", 1 );
+    pub_contact_ = n_.advertise<std_msgs::Bool> ( "airskin_contact", 1 );
+    
     sub_colors_ = n_.subscribe<tuw_airskin_msgs::AirskinColors> ( "airskin_colors", 1, &AirSkinNodelet::colorsCallback, this );
     timer_ = n_.createTimer ( ros::Duration ( 0.1 ), boost::bind ( &AirSkinNodelet::timerCallback, this, _1 ) );
 }
@@ -74,7 +77,7 @@ void AirSkinNodelet::colorsCallback ( const tuw_airskin_msgs::AirskinColors::Con
 
 void AirSkinNodelet::timerCallback ( const ros::TimerEvent& event ) {
     airskin_pressures_.header.stamp = ros::Time().now();
-
+    contact_.data = false;
     for ( size_t i = 0; i < pads_.size(); i++) {
         std::shared_ptr<AirSkinPad> pad = pads_[i];
         pad->update();
@@ -87,11 +90,16 @@ void AirSkinNodelet::timerCallback ( const ros::TimerEvent& event ) {
             pressures_max_[i] = airskin_pressures_.pressures[i];
         }
         airskin_pressures_.min[i] =  pressures_min_[i];
-        airskin_pressures_.max[i] =  pressures_max_[i];        
+        airskin_pressures_.max[i] =  pressures_max_[i]; 
+        double pressure_normalized = (double)(airskin_pressures_.pressures[i] - airskin_pressures_.min[i]) / (double)( airskin_pressures_.max[i] -  airskin_pressures_.min[i]);
+        if(pressure_normalized > contact_treshold_) {
+            contact_.data = true;
+        }
         std::string frame_id = tf::resolve ( ros::this_node::getNamespace(), pad->getName() );
         airskin_pressures_.frame_ids[i] = frame_id;
     }
     pub_pressures_.publish ( airskin_pressures_ );
+    pub_contact_.publish ( contact_ );
 }
 }
 PLUGINLIB_EXPORT_CLASS ( tuw::AirSkinNodelet, nodelet::Nodelet )

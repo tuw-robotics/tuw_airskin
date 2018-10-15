@@ -20,7 +20,7 @@ private:
   ros::NodeHandle nh_;
   ros::NodeHandle n_;
   ros::Subscriber sub_pressures_;
-  ros::Publisher pub_twist_;
+  ros::Publisher pub_cmd_twist_;
 
   tf::TransformListener tf_listener_;
 
