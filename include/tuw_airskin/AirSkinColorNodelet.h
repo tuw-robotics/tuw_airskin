@@ -3,6 +3,7 @@
 
 #include <nodelet/nodelet.h>
 #include <ros/ros.h>
+#include <tuw_airskin_msgs/AirskinInfo.h>
 #include <tuw_airskin_msgs/AirskinColors.h>
 #include <tuw_airskin_msgs/AirskinPressures.h>
 #include <geometry_msgs/Twist.h>
@@ -22,20 +23,25 @@ private:
   ros::NodeHandle nh_;
   ros::NodeHandle n_;
   ros::Subscriber sub_pressures_;
+  ros::Subscriber sub_info_;
   ros::Publisher pub_colors_;
 
   tf::TransformListener tf_listener_;
 
+  double info_timeout_;
   std::vector<std::string> pad_names_;
   std::map<std::string, int> pads_;
   bool publish_joint_;
 
+  
   dynamic_reconfigure::Server<tuw_airskin::AirSkinColorNodeletConfig> reconfigureServer_;
   dynamic_reconfigure::Server<tuw_airskin::AirSkinColorNodeletConfig>::CallbackType reconfigureFnc_;
 
   tuw_airskin::AirSkinColorNodeletConfig config_;
+  tuw_airskin_msgs::AirskinInfo airskin_info_;
 
-  void pressuresCallback(const tuw_airskin_msgs::AirskinPressures::ConstPtr &pressures);
+  void infoCallback(const tuw_airskin_msgs::AirskinInfo::ConstPtr &msg);
+  void pressuresCallback(const tuw_airskin_msgs::AirskinPressures::ConstPtr &msg);
   void configCallback(tuw_airskin::AirSkinColorNodeletConfig &config, uint32_t level);
 };
 }

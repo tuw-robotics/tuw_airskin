@@ -5,6 +5,7 @@
 #include <ros/ros.h>
 #include <tuw_i2c/I2C_Master.h>
 #include <tuw_airskin/AirSkinPad.h>
+#include <tuw_airskin_msgs/AirskinInfo.h>
 #include <tuw_airskin_msgs/AirskinColors.h>
 #include <tuw_airskin_msgs/AirskinPressures.h>
 #include <tf/transform_listener.h>
@@ -19,6 +20,7 @@ public:
 private:
   ros::NodeHandle nh_;
   ros::NodeHandle n_;
+  ros::Publisher pub_info_;
   ros::Publisher pub_pressures_;
   ros::Publisher pub_contact_;
   ros::Subscriber sub_colors_;
@@ -32,6 +34,7 @@ private:
   std::vector<std::shared_ptr<AirSkinPad> > pads_;
   ros::Timer timer_;
   std_msgs::Bool contact_;
+  tuw_airskin_msgs::AirskinInfo airskin_info_;
   tuw_airskin_msgs::AirskinPressures airskin_pressures_;
   void timerCallback(const ros::TimerEvent& event);
   void colorsCallback(const tuw_airskin_msgs::AirskinColors::ConstPtr& colors);

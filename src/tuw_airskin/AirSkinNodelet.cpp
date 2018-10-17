@@ -46,13 +46,16 @@ void AirSkinNodelet::onInit() {
         }
         
     }
+    airskin_info_.header.frame_id = frame_id_;
+    airskin_info_.names.resize ( pads_.size() );
+    airskin_info_.ids.resize ( pads_.size() );
+    airskin_info_.min.resize ( pads_.size() );
+    airskin_info_.max.resize ( pads_.size() );
+    
     airskin_pressures_.header.frame_id = frame_id_;
     airskin_pressures_.pressures.resize ( pads_.size() );
-    airskin_pressures_.names.resize ( pads_.size() );
-    airskin_pressures_.ids.resize ( pads_.size() );
-    airskin_pressures_.min.resize ( pads_.size() );
-    airskin_pressures_.max.resize ( pads_.size() );
 
+    pub_info_ = n_.advertise<tuw_airskin_msgs::AirskinInfo> ( "airskin_info", 1 );
     pub_pressures_ = n_.advertise<tuw_airskin_msgs::AirskinPressures> ( "airskin_pressures", 1 );
     pub_contact_ = n_.advertise<std_msgs::Bool> ( "airskin_contact", 1 );
     
@@ -77,29 +80,33 @@ void AirSkinNodelet::colorsCallback ( const tuw_airskin_msgs::AirskinColors::Con
 }
 
 void AirSkinNodelet::timerCallback ( const ros::TimerEvent& event ) {
+    airskin_info_.header.stamp = ros::Time().now();
     airskin_pressures_.header.stamp = ros::Time().now();
     contact_.data = false;
     for ( size_t i = 0; i < pads_.size(); i++) {
         std::shared_ptr<AirSkinPad> pad = pads_[i];
         pad->update();
-        airskin_pressures_.ids[i] = pad->getAddr();
-        airskin_pressures_.pressures[i] = pad->getPressure();
+        int pressure = pad->getPressure();
+        airskin_info_.ids[i] = pad->getAddr();
         if(auto_calibration_) {
-          if ( airskin_pressures_.pressures[i] < pressures_min_[i] ) {
-              pressures_min_[i] = airskin_pressures_.pressures[i];
+          if ( pressure < pressures_min_[i] ) {
+              pressures_min_[i] = pressure;
           }
-          if ( airskin_pressures_.pressures[i] > pressures_max_[i] ) {
-              pressures_max_[i] = airskin_pressures_.pressures[i];
+          if ( pressure > pressures_max_[i] ) {
+              pressures_max_[i] = pressure;
           }
         }
-        airskin_pressures_.min[i] =  pressures_min_[i];
-        airskin_pressures_.max[i] =  pressures_max_[i]; 
-        double pressure_normalized = (double)(airskin_pressures_.pressures[i] - airskin_pressures_.min[i]) / (double)( airskin_pressures_.max[i] -  airskin_pressures_.min[i]);
+        airskin_info_.min[i] =  pressures_min_[i];
+        airskin_info_.max[i] =  pressures_max_[i]; 
+        double pressure_normalized = (double)(pressure - pressures_min_[i]) / (double)(  pressures_max_[i] -   pressures_min_[i]);
         if(pressure_normalized > contact_treshold_) {
             contact_.data = true;
         }
-        airskin_pressures_.names[i] = pad->getName();
+        airskin_info_.names[i] = pad->getName();
+        
+        airskin_pressures_.pressures[i] = pressure;
     }
+    pub_info_.publish ( airskin_info_ );
     pub_pressures_.publish ( airskin_pressures_ );
     pub_contact_.publish ( contact_ );
 }

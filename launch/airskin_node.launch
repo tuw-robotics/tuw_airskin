@@ -10,10 +10,11 @@
         <rosparam command="load" file="$(find tuw_airskin)/cfg/airskin.yaml" />
     </node>
     <group if="$(arg launch_color)" >
-        <node pkg="tuw_airskin" type="tuw_airskin_color_node" name="airskin_control" output="screen" />
+        <node pkg="tuw_airskin" type="tuw_airskin_color_node" name="airskin_color" output="screen" />
     </group> 
     <group if="$(arg launch_control)" >
         <node pkg="tuw_airskin" type="tuw_airskin_control_node" name="airskin_control" output="screen"/>
+        <rosparam command="load" file="$(find tuw_airskin)/cfg/airskin_control.yaml" />
     </group> 
   </group>
 </launch>
