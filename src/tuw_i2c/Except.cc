@@ -15,7 +15,7 @@
 #ifdef EXCEPTION_BACKTRACE
 #include <execinfo.h>
 #endif
-#include <airskin_nodelet/Except.h>
+#include <tuw_i2c/Except.h>
 
 /**
  * Except constructor.

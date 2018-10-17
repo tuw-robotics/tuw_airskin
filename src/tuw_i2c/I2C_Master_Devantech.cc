@@ -8,8 +8,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string>
-#include <airskin_nodelet/Except.h>
-#include <airskin_nodelet/I2C_Master_Devantech.h>
+#include <tuw_i2c/Except.h>
+#include <tuw_i2c/I2C_Master_Devantech.h>
 
 // Read/Write single byte for non-registered devices,
 #define I2C_SGL 0x53

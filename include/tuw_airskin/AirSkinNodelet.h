@@ -3,8 +3,8 @@
 
 #include <nodelet/nodelet.h>
 #include <ros/ros.h>
-#include <airskin_nodelet/I2C_Master.h>
-#include <airskin_nodelet/AirSkinPad.h>
+#include <tuw_i2c/I2C_Master.h>
+#include <tuw_airskin/AirSkinPad.h>
 #include <tuw_airskin_msgs/AirskinColors.h>
 #include <tuw_airskin_msgs/AirskinPressures.h>
 #include <tf/transform_listener.h>
@@ -25,6 +25,7 @@ private:
   std::string device_file_name_;
   std::string frame_id_;
   double contact_treshold_; 
+  bool auto_calibration_;
   std::vector<int> pressures_min_;
   std::vector<int> pressures_max_;
   std::shared_ptr<I2C_Master> i2c_master_;

@@ -9,8 +9,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#include <airskin_nodelet/Except.h>
-#include <airskin_nodelet/I2C_Master_Devantech_ISS.h>
+#include <tuw_i2c/Except.h>
+#include <tuw_i2c/I2C_Master_Devantech_ISS.h>
 
 #define USB_ISS 0x5A
 // Returns 3 bytes, the module ID (7), firmware version (currently 2), and the current operating mode.

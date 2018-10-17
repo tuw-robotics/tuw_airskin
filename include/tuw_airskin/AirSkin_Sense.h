@@ -6,7 +6,7 @@
 #define AIRSKIN_PROTOTYPE_H
 
 #include <stdint.h>
-#include <airskin_nodelet/I2C_Slave.h>
+#include <tuw_i2c/I2C_Slave.h>
 
 /**
  * default I2C address: 0x04 (7 Bit) -> 0x08 (8 Bit), with last bit being the read/write bit

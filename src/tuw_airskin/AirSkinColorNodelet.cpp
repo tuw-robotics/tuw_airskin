@@ -1,5 +1,5 @@
 #include <pluginlib/class_list_macros.h>
-#include <airskin_nodelet/AirSkinColorNodelet.h>
+#include <tuw_airskin/AirSkinColorNodelet.h>
 
 namespace tuw
 {

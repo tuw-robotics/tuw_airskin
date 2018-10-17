@@ -1,7 +1,7 @@
 #include <pluginlib/class_list_macros.h>
-#include <airskin_nodelet/AirSkinNodelet.h>
+#include <tuw_airskin/AirSkinNodelet.h>
 //#include <airskin_nodelet/I2C_Master_MPSSE.h>
-#include <airskin_nodelet/I2C_Master_Devantech_ISS.h>
+#include <tuw_i2c/I2C_Master_Devantech_ISS.h>
 #include <string>
 #include <memory>
 
@@ -27,6 +27,7 @@ void AirSkinNodelet::onInit() {
     nh_.param ( "contact_treshold", contact_treshold_, 0.3 );
     nh_.param ( "pressures_min", pressures_min_, std::vector<int>() );
     nh_.param ( "pressures_max", pressures_max_, std::vector<int>() );
+    nh_.param ( "auto_calibration", auto_calibration_, true );
 
     if ( (pad_names.size() != pad_i2c_ids.size() ) ||  (pad_names.size() !=  pressures_min_.size()) || (pad_names.size() != pressures_max_.size())) {
         NODELET_ERROR ( "Size of pad_names (%zu), pad_i2c_ids (%zu), pressures_min (%zu) and pressures_max (%zu) do not match!",
@@ -47,7 +48,7 @@ void AirSkinNodelet::onInit() {
     }
     airskin_pressures_.header.frame_id = frame_id_;
     airskin_pressures_.pressures.resize ( pads_.size() );
-    airskin_pressures_.frame_ids.resize ( pads_.size() );
+    airskin_pressures_.names.resize ( pads_.size() );
     airskin_pressures_.ids.resize ( pads_.size() );
     airskin_pressures_.min.resize ( pads_.size() );
     airskin_pressures_.max.resize ( pads_.size() );
@@ -83,11 +84,13 @@ void AirSkinNodelet::timerCallback ( const ros::TimerEvent& event ) {
         pad->update();
         airskin_pressures_.ids[i] = pad->getAddr();
         airskin_pressures_.pressures[i] = pad->getPressure();
-        if ( airskin_pressures_.pressures[i] < pressures_min_[i] ) {
-            pressures_min_[i] = airskin_pressures_.pressures[i];
-        }
-        if ( airskin_pressures_.pressures[i] > pressures_max_[i] ) {
-            pressures_max_[i] = airskin_pressures_.pressures[i];
+        if(auto_calibration_) {
+          if ( airskin_pressures_.pressures[i] < pressures_min_[i] ) {
+              pressures_min_[i] = airskin_pressures_.pressures[i];
+          }
+          if ( airskin_pressures_.pressures[i] > pressures_max_[i] ) {
+              pressures_max_[i] = airskin_pressures_.pressures[i];
+          }
         }
         airskin_pressures_.min[i] =  pressures_min_[i];
         airskin_pressures_.max[i] =  pressures_max_[i]; 
@@ -95,8 +98,7 @@ void AirSkinNodelet::timerCallback ( const ros::TimerEvent& event ) {
         if(pressure_normalized > contact_treshold_) {
             contact_.data = true;
         }
-        std::string frame_id = tf::resolve ( ros::this_node::getNamespace(), pad->getName() );
-        airskin_pressures_.frame_ids[i] = frame_id;
+        airskin_pressures_.names[i] = pad->getName();
     }
     pub_pressures_.publish ( airskin_pressures_ );
     pub_contact_.publish ( contact_ );

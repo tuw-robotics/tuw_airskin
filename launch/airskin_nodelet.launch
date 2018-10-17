@@ -9,11 +9,10 @@
   
   <group ns="$(arg robot_name)">
     <node pkg="nodelet" type="nodelet" name="airskin_manager"  args="manager" output="screen" />
-    <group unless="$(arg sim)">
-      <node pkg="nodelet" type="nodelet" name="AirSkinNodelet" args="load tuw/AirSkinNodelet airskin_manager" output="screen" >
-        <rosparam command="load" file="$(find tuw_airskin)/cfg/airskin.yaml" />
-      </node>
-    </group>
+    
+    <node pkg="nodelet" type="nodelet" name="AirSkinNodelet" args="load tuw/AirSkinNodelet airskin_manager" output="screen" >
+      <rosparam command="load" file="$(find tuw_airskin)/cfg/airskin.yaml" />
+    </node>
     <group if="$(arg launch_color)" >
       <node pkg="nodelet" type="nodelet" name="AirSkinColorNodelet" args="load tuw/AirSkinColorNodelet airskin_manager" output="screen" />
     </group> 

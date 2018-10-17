@@ -1,7 +1,7 @@
 #ifndef I2C_SLAVE_H
 #define I2C_SLAVE_H
 
-#include <airskin_nodelet/I2C_Master.h>
+#include <tuw_i2c/I2C_Master.h>
 #include <memory>
 
 class I2C_Slave

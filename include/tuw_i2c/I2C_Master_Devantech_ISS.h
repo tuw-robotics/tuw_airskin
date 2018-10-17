@@ -13,7 +13,7 @@
 
 #include <termios.h>
 #include <string>
-#include <airskin_nodelet/I2C_Master.h>
+#include <tuw_i2c/I2C_Master.h>
 
 class I2C_Master_Devantech_ISS : public I2C_Master
 {

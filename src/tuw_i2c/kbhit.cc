@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#include <airskin_nodelet/kbhit.h>
+#include <tuw_i2c/kbhit.h>
 
 /**
  * example for usage:

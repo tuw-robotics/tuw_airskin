@@ -22,11 +22,7 @@ private:
   ros::Subscriber sub_pressures_;
   ros::Publisher pub_cmd_twist_;
 
-  tf::TransformListener tf_listener_;
-
-  std::vector<std::string> pad_names_;
-  std::map<std::string, int> pads_;
-  bool publish_joint_;
+  std::vector<std::string> cmd_pads_;
 
   dynamic_reconfigure::Server<tuw_airskin::AirSkinControlNodeletConfig> reconfigureServer_;
   dynamic_reconfigure::Server<tuw_airskin::AirSkinControlNodeletConfig>::CallbackType reconfigureFnc_;
@@ -35,6 +31,7 @@ private:
 
   void pressuresCallback(const tuw_airskin_msgs::AirskinPressures::ConstPtr &pressures);
   void configCallback(tuw_airskin::AirSkinControlNodeletConfig &config, uint32_t level);
+  geometry_msgs::Twist cmd_twist_;
 };
 }
 

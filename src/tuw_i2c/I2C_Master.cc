@@ -4,8 +4,8 @@
 
 #include <stdio.h>
 #include <unistd.h>
-#include <airskin_nodelet/Except.h>
-#include <airskin_nodelet/I2C_Master.h>
+#include <tuw_i2c/Except.h>
+#include <tuw_i2c/I2C_Master.h>
 
 void I2C_Master::CheckedRead(int fd, unsigned char buf[], size_t len)
 {

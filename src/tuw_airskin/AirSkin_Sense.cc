@@ -4,8 +4,8 @@
 
 #include <cstdio>
 #include <unistd.h>
-#include <airskin_nodelet/AirSkin_Sense.h>
-#include <airskin_nodelet/AirSkinPad.h>
+#include <tuw_airskin/AirSkin_Sense.h>
+#include <tuw_airskin/AirSkinPad.h>
 #include <nodelet/nodelet.h>
 #include <memory>
 

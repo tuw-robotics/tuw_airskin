@@ -130,20 +130,20 @@ include_directories(include
 
 ## Declare a C++ library
 add_library(tuw_airskin  
-                  src/AirSkin_Sense.cc 
-                  src/AirSkinPad.cpp 
-                  src/I2C_Master.cc  
-                  src/I2C_Master_Devantech_ISS.cc  
-                  src/kbhit.cc
-                  src/Except.cc  
-                  src/I2C_Master_Devantech.cc  
+                  src/tuw_airskin/AirSkin_Sense.cc 
+                  src/tuw_airskin/AirSkinPad.cpp 
+                  src/tuw_airskin/AirSkinNodelet.cpp 
+                  src/tuw_i2c/I2C_Master.cc  
+                  src/tuw_i2c/I2C_Master_Devantech_ISS.cc  
+                  src/tuw_i2c/kbhit.cc
+                  src/tuw_i2c/Except.cc  
+                  src/tuw_i2c/I2C_Master_Devantech.cc  
                   #src/I2C_Master_MPSSE.cpp 
-                  src/I2C_Slave.cc
-                  src/AirSkinNodelet.cpp )
+                  src/tuw_i2c/I2C_Slave.cc)
                   
 add_library(tuw_airskin_tools  
-                  src/AirSkinControlNodelet.cpp
-                  src/AirSkinColorNodelet.cpp
+                  src/tuw_airskin/AirSkinControlNodelet.cpp
+                  src/tuw_airskin/AirSkinColorNodelet.cpp
 )
 
 
@@ -154,9 +154,9 @@ add_dependencies(tuw_airskin ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORT
 add_dependencies(tuw_airskin_tools ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(tuw_airskin_node src/AirSkinNode.cpp)
-add_executable(tuw_airskin_control_node src/AirSkinControlNode.cpp)
-add_executable(tuw_airskin_color_node src/AirSkinColorNode.cpp)
+add_executable(tuw_airskin_node src/tuw_airskin/AirSkinNode.cpp)
+add_executable(tuw_airskin_control_node src/tuw_airskin/AirSkinControlNode.cpp)
+add_executable(tuw_airskin_color_node src/tuw_airskin/AirSkinColorNode.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above

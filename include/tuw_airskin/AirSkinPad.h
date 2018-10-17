@@ -5,9 +5,9 @@
 #include <vector>
 #include <ros/ros.h>
 #include <std_msgs/Bool.h>
-#include <airskin_nodelet/Except.h>
-#include <airskin_nodelet/I2C_Master_Devantech_ISS.h>
-#include <airskin_nodelet/AirSkin_Sense.h>
+#include <tuw_i2c/Except.h>
+#include <tuw_i2c/I2C_Master_Devantech_ISS.h>
+#include <tuw_airskin/AirSkin_Sense.h>
 #include <std_msgs/ColorRGBA.h>
 #include <memory>
 
