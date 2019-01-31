@@ -17,7 +17,7 @@
       <node pkg="nodelet" type="nodelet" name="AirSkinColorNodelet" args="load tuw/AirSkinColorNodelet airskin_manager" output="screen" />
     </group> 
     <group if="$(arg launch_control)" >
-      <node pkg="nodelet" type="nodelet" name="AirSkinColorNodelet" args="load tuw/AirSkinColorNodelet airskin_manager" output="screen" />
-    </group> 
+      <node pkg="nodelet" type="nodelet" name="AirSkinControlNodelet" args="load tuw/AirSkinControlNodelet airskin_manager" output="screen" />
+    </group>
   </group>
 </launch>

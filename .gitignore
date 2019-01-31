@@ -50,6 +50,9 @@ build
 # KDevelop
 *kdev*
 
+# VSCode
+.vscode/*
+
 # ROS
 build
 devel
